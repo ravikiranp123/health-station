@@ -1,0 +1,18 @@
+
+FROM python:3.11-alpine
+
+WORKDIR /app
+
+# Install dependencies
+# MCP might strictly need build deps if pre-compiled wheels aren't available for Alpine (musllinux)
+# but let's try pure install first. 
+RUN pip install mcp
+
+# Copy project files
+COPY . /app/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Default command
+CMD ["python", "tools/kitchen_server.py"]

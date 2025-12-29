@@ -1,0 +1,32 @@
+version: "3"
+services:
+  healthos-sync:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: healthos-syncthing
+    environment:
+      - PUID=501 # Standard Mac User ID
+      - PGID=20 # Standard Mac Group ID (staff)
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./state/syncthing_config:/config
+      - ./logs/inbox:/data/inbox
+    ports:
+      - 8384:8384 # Web UI
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    restart: unless-stopped
+
+  kitchen-mcp:
+    build:
+      context: .
+      dockerfile: tools/Dockerfile.mcp
+    container_name: healthos-kitchen
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+    # Keep container running so we can exec into it, 
+    # or serves as a build definition. 
+    # 'tail -f /dev/null' is a common hack to keep non-server containers alive for exec.
+    command: tail -f /dev/null
