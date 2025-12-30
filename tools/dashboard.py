@@ -271,6 +271,71 @@ def main():
     page_names = {"journal": "Daily Journal", "recipes": "Recipe Database", "kb": "Knowledge Base"}
     st.sidebar.caption(f"Current: **{page_names.get(current_page, 'Unknown')}**")
 
+
+
+    # ---------------------------------------------------------
+    # CSS: Mobile Optimizations
+    # ---------------------------------------------------------
+    st.markdown("""
+        <style>
+        /* Mobile: Transform table into vertical cards */
+        @media (max-width: 640px) {
+            /* Transform each row into a vertical card */
+            div[data-testid="stHorizontalBlock"] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                border: 1px solid #333;
+                border-radius: 8px;
+                padding: 12px !important;
+                margin-bottom: 12px !important;
+                background: rgba(255,255,255,0.02);
+            }
+            
+            /* Make each column take full width and stack */
+            div[data-testid="column"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                flex: 0 0 auto !important;
+                margin-bottom: 8px !important;
+            }
+            
+            /* Hide the header row on mobile */
+            div[data-testid="stHorizontalBlock"]:has(div[data-testid="stCaptionContainer"]) {
+                display: none !important;
+            }
+            
+            /* Style checkbox row */
+            div[data-testid="column"]:has(div[data-testid="stCheckbox"]) {
+                order: -1; /* Move checkbox to top */
+                margin-bottom: 0px !important;
+            }
+            
+            /* Tighter padding */
+            div.block-container {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+        }
+        
+        /* Floating Timer - Force Clickability */
+        .floating-timer-container {
+            position: fixed !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+        }
+        .floating-timer-container * {
+            pointer-events: auto !important;
+        }
+        
+        /* Add bottom padding so floating timer doesn't cover content */
+        .block-container {
+            padding-bottom: 120px !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     # ---------------------------------------------------------
     # JOURNAL SECTION (with Interactive Workout Tracking)
     # ---------------------------------------------------------
@@ -331,7 +396,7 @@ def main():
                                     sections.append(current_section)
                                 
                                 current_round = line.replace("###", "").strip()
-                                current_section = {"type": "markdown", "content": [line], "header": None, "round": current_round}
+                                current_section = {"type": "markdown", "content": [], "header": None, "round": current_round}
                                 continue
                             
                             # Detect table start (header row with |)
@@ -353,6 +418,7 @@ def main():
                                     exercise = cells[0]
                                     planned = cells[1]
                                     actual = cells[2] if len(cells) > 2 else ""
+                                    notes = cells[3] if len(cells) > 3 else ""  # Optional 4th column
                                     
                                     # Check if completed (has ✓)
                                     is_completed = "✓" in actual
@@ -363,15 +429,16 @@ def main():
                                     is_timed = "s" in actual.lower() and ("plank" in exercise.lower() or "hold" in exercise.lower() or "45s" in planned or "30s" in actual)
                                     
                                     table_data.append({
+                                        "id": f"{i}_{len(table_data)}",
                                         "exercise": exercise,
                                         "planned": planned,
-                                        "actual_raw": actual,
+                                        "actual": actual,
+                                        "notes": notes,  # Add notes to data
                                         "actual_value": actual_value,
                                         "is_completed": is_completed,
-                                        "is_timed": is_timed,
-                                        "round": current_round,
-                                        "id": f"{current_round}_{exercise}".replace(" ", "_")
+                                        "is_timed": is_timed
                                     })
+
                                 continue
                             
                             # End of table (non-table line after table started)
@@ -401,35 +468,7 @@ def main():
                         # Render sections
                         has_workout = any(s["type"] == "workout_table" for s in sections)
                         
-                        # Timer component (show only if there's a workout section)
-                        if has_workout:
-                            with st.sidebar:
-                                st.markdown("### ⏱️ Timer")
-                                timer_html = """
-                                <style>
-                                    .mini-timer { padding: 10px; background: #1a1a2e; border-radius: 8px; text-align: center; }
-                                    .mini-display { font-size: 2em; font-family: monospace; color: #00ff88; }
-                                    .mini-btn { margin: 5px; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
-                                    .mini-start { background: #00c853; color: #1a1a2e; }
-                                    .mini-stop { background: #ff1744; color: white; display: none; }
-                                    .mini-reset { background: #424242; color: white; }
-                                </style>
-                                <div class="mini-timer">
-                                    <div class="mini-display" id="mini-timer-display">00:00</div>
-                                    <button class="mini-btn mini-start" id="mini-start" onclick="miniStart()">▶ Start</button>
-                                    <button class="mini-btn mini-stop" id="mini-stop" onclick="miniStop()">⏸ Stop</button>
-                                    <button class="mini-btn mini-reset" onclick="miniReset()">↻</button>
-                                </div>
-                                <script>
-                                    let miniInterval=null, miniSec=0, miniRunning=false;
-                                    function miniFormat(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
-                                    function miniUpdate(){document.getElementById('mini-timer-display').textContent=miniFormat(miniSec);}
-                                    function miniStart(){if(!miniRunning){miniRunning=true;document.getElementById('mini-start').style.display='none';document.getElementById('mini-stop').style.display='inline-block';miniInterval=setInterval(()=>{miniSec++;miniUpdate();},1000);}}
-                                    function miniStop(){if(miniRunning){miniRunning=false;clearInterval(miniInterval);document.getElementById('mini-start').style.display='inline-block';document.getElementById('mini-stop').style.display='none';}}
-                                    function miniReset(){miniStop();miniSec=0;miniUpdate();}
-                                </script>
-                                """
-                                st.components.v1.html(timer_html, height=120)
+
                         
                         # Track if we need to show save button
                         modified = False
@@ -444,16 +483,78 @@ def main():
                                 round_name = section["round"]
                                 st.markdown(f"#### {round_name}")
                                 
-                                # Create interactive table
-                                col_done, col_ex, col_target, col_actual = st.columns([0.5, 3, 1.5, 2])
+                                # Sanitize round name for CSS/JS (remove colons, spaces, special chars)
+                                safe_name = re.sub(r'[^a-zA-Z0-9]', '_', round_name)
+                                
+                                # Timer for this round
+                                timer_html = f"""
+                                <style>
+                                    .round-timer-{safe_name} {{
+                                        background: #1a1a2e;
+                                        border: 1px solid #333;
+                                        border-radius: 8px;
+                                        padding: 8px;
+                                        margin: 10px 0;
+                                        display: flex;
+                                        gap: 8px;
+                                        align-items: center;
+                                        justify-content: center;
+                                    }}
+                                    .timer-display-{safe_name} {{ font-size: 1.1em; font-family: monospace; color: #00ff88; min-width: 50px; text-align: center; }}
+                                    .timer-btn-{safe_name} {{ padding: 4px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 0.85em; }}
+                                    .timer-start-{safe_name} {{ background: #00c853; color: #1a1a2e; }}
+                                    .timer-stop-{safe_name} {{ background: #ff1744; color: white; display: none; }}
+                                    .timer-reset-{safe_name} {{ background: #424242; color: white; }}
+                                </style>
+                                <div class="round-timer-{safe_name}">
+                                    <div class="timer-display-{safe_name}" id="timer-{safe_name}">00:00</div>
+                                    <button class="timer-btn-{safe_name} timer-start-{safe_name}" id="start-{safe_name}" onclick="start_{safe_name}()">▶</button>
+                                    <button class="timer-btn-{safe_name} timer-stop-{safe_name}" id="stop-{safe_name}" onclick="stop_{safe_name}()">⏸</button>
+                                    <button class="timer-btn-{safe_name} timer-reset-{safe_name}" onclick="reset_{safe_name}()">↻</button>
+                                </div>
+                                <script>
+                                    if (typeof timer_{safe_name}_interval === 'undefined') {{
+                                        var timer_{safe_name}_interval=null, timer_{safe_name}_sec=0, timer_{safe_name}_running=false;
+                                    }}
+                                    function timerFormat_{safe_name}(s){{return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}}
+                                    function timerUpdate_{safe_name}(){{
+                                        const el = document.getElementById('timer-{safe_name}');
+                                        if(el) el.textContent=timerFormat_{safe_name}(timer_{safe_name}_sec);
+                                    }}
+                                    function start_{safe_name}(){{
+                                        if(!timer_{safe_name}_running){{
+                                            timer_{safe_name}_running=true;
+                                            document.getElementById('start-{safe_name}').style.display='none';
+                                            document.getElementById('stop-{safe_name}').style.display='inline-block';
+                                            timer_{safe_name}_interval=setInterval(()=>{{timer_{safe_name}_sec++;timerUpdate_{safe_name}();}},1000);
+                                        }}
+                                    }}
+                                    function stop_{safe_name}(){{
+                                        if(timer_{safe_name}_running){{
+                                            timer_{safe_name}_running=false;
+                                            clearInterval(timer_{safe_name}_interval);
+                                            document.getElementById('start-{safe_name}').style.display='inline-block';
+                                            document.getElementById('stop-{safe_name}').style.display='none';
+                                        }}
+                                    }}
+                                    function reset_{safe_name}(){{stop_{safe_name}();timer_{safe_name}_sec=0;timerUpdate_{safe_name}();}}
+                                </script>
+                                """
+                                st.components.v1.html(timer_html, height=60)
+                                
+                                # Create interactive table - Compact Mobile Layout
+                                # Columns: Checkbox | Exercise + Target | Notes | Actual Input
+                                col_done, col_details, col_notes, col_actual = st.columns([0.7, 3, 2, 1.5], vertical_alignment="center")
+                                
+                                # Headers
                                 with col_done:
                                     st.caption("✓")
-                                with col_ex:
+                                with col_details:
                                     st.caption("Exercise")
-                                with col_target:
-                                    st.caption("Target")
+                                with col_notes:
+                                    st.caption("Notes")
                                 with col_actual:
-                                    st.caption("Actual")
+                                    st.caption("Log")
                                 
                                 for row in section["data"]:
                                     ex_id = row["id"]
@@ -466,7 +567,7 @@ def main():
                                             "is_timed": row["is_timed"]
                                         }
                                     
-                                    col_done, col_ex, col_target, col_actual = st.columns([0.5, 3, 1.5, 2])
+                                    col_done, col_details, col_notes, col_actual = st.columns([0.7, 3, 2, 1.5], vertical_alignment="center")
                                     
                                     with col_done:
                                         new_completed = st.checkbox(
@@ -479,13 +580,21 @@ def main():
                                             st.session_state.workout_data[ex_id]["completed"] = new_completed
                                             modified = True
                                     
-                                    with col_ex:
-                                        style = "~~" if st.session_state.workout_data[ex_id]["completed"] else ""
-                                        st.markdown(f"{style}{row['exercise']}{style}")
-                                    
-                                    with col_target:
+                                    with col_details:
+                                        # Exercise Name + Target in one cell
+                                        style = "~~" if st.session_state.workout_data[ex_id]["completed"] else "**"
+                                        ex_name = f"{style}{row['exercise']}{style}"
+                                        
                                         icon = "⏱️" if row["is_timed"] else "🎯"
-                                        st.caption(f"{icon} {row['planned']}")
+                                        target_str = f"{icon} {row['planned']}"
+                                        
+                                        # Render exercise name + target
+                                        st.markdown(f"{ex_name}  \n<span style='color:gray; font-size:0.9em'>{target_str}</span>", unsafe_allow_html=True)
+                                        
+                                    with col_notes:
+                                        # Notes column - Dedicated
+                                        if row.get('notes'):
+                                            st.markdown(f"<span style='color:#888; font-size:0.85em; font-style:italic'>{row['notes']}</span>", unsafe_allow_html=True)
                                     
                                     with col_actual:
                                         max_val = 600 if row["is_timed"] else 100
