@@ -45,3 +45,54 @@
 - Always start sets with LEFT arm.
 - Match reps to LEFT capacity (don't let right pull ahead).
 - Slow eccentrics on LEFT (3 seconds down).
+
+---
+
+## 6. Incline Dumbbell Press
+**Target:** Upper Chest, Front Delts, Triceps.  
+**Tool:** Dumbbells + Incline Bench (Apartment Gym).  
+**Angle:** ~30-45°. Too high = shoulder press.
+
+*   **Setup:** Feet flat. Arch back slightly. Shoulder blades pinched.
+*   **Path:** Press up and slightly inward (dumbbells nearly touch at top).
+*   **Down:** Slow (2-3 sec). Elbows at ~45° angle (not flared 90°).
+*   **Depth:** Dumbbells to chest level. Full stretch at bottom.
+
+## 7. Overhead Press (Standing)
+**Target:** All 3 Delt Heads, Triceps, Core, Upper Back.  
+**Tool:** Dumbbells or Barbell.
+
+*   **Stance:** Feet shoulder-width. Brace core (squeeze glutes).
+*   **Start:** At shoulder level, elbows slightly forward.
+*   **Press:** Straight up, head moves forward as bar passes.
+*   **Lock:** Full lockout at top. Arms by ears.
+*   **Down:** Controlled. Don't bounce off shoulders.
+
+## 8. Pull-ups / Lat Pulldown
+**Target:** Lats, Biceps, Rear Delts, Grip.  
+**Tool:** Pull-up Bar or Cable Machine.
+
+*   **Grip:** Slightly wider than shoulder width. Overhand.
+*   **Initiate:** Pull elbows DOWN and BACK (not arms pulling).
+*   **Top:** Chin over bar OR bar to upper chest (pulldown).
+*   **Down:** Full stretch. Let lats elongate.
+*   **Progression:** Bodyweight → Weighted vest/belt → Heavier.
+
+## 9. Dumbbell Row
+**Target:** Lats, Rhomboids, Rear Delts, Biceps.  
+**Tool:** Heavy Dumbbell, Bench for support.
+
+*   **Setup:** One knee/hand on bench. Back flat (parallel to floor).
+*   **Pull:** Elbow drives to hip (not shoulder).
+*   **Squeeze:** Pause at top. Feel lat contract.
+*   **Down:** Full stretch. Let shoulder protract slightly.
+
+## 10. Slow Walking Protocol
+**Target:** Recovery, Fat Oxidation, Step Count.  
+**Tool:** Legs.
+
+*   **Pace:** "Slow AF" — Conversational. Not cardio.
+*   **Posture:** Upright. Eyes forward. Arms swing naturally.
+*   **Breathing:** Nasal if possible.
+*   **Goal:** 10,000 steps/day spread across morning, lunch, evening.
+*   **Why:** Burns calories, aids recovery, doesn't spike cortisol like running.
