@@ -36,7 +36,7 @@ INBOX_DIR = LOGS_DIR / 'inbox'
 # Ensure directories exist (create if missing)
 def ensure_directories():
     """Create data directories if they don't exist."""
-    for dir_path in [REGISTRY_DIR, STATE_DIR, LOGS_DIR, LIBRARY_DIR, JOURNAL_DIR, INBOX_DIR]:
+    for dir_path in [REGISTRY_DIR, STATE_DIR, LOGS_DIR, JOURNAL_DIR, INBOX_DIR]:
         dir_path.mkdir(parents=True, exist_ok=True)
 
 # Auto-create on import (safe for read operations)
