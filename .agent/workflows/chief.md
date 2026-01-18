@@ -42,6 +42,7 @@ When creating the daily journal entry in `user_data/logs/journal/`:
     -   `## Workout` header.
     -   `### Round X` subheaders (Separate table for EACH set).
     -   **Unilateral Split**: Separate rows for (Left) and (Right).
+    -   **High Volume Management**: If a workout involves high reps (e.g., Mudgar 100/side), ensure the Coach breaks it into rounds (e.g., 5x20). Do not accept single-set aggregation.
     -   Tables with `| Exercise | Planned | Actual | Notes |`.
 2.  **Automatic Updates:** When you provide meal plans, nutrition advice, or daily briefings:
     -   **ALWAYS update the corresponding journal file** in `user_data/logs/journal/YYYY-MM-DD.md`.

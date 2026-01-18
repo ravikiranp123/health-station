@@ -43,7 +43,8 @@ When generating a workout plan (for a new routine or a daily log), you MUST use 
     -   **Unilateral Split:** For single-arm/leg exercises, you MUST create TWO rows:
         -   `Exercise Name (Left)`
         -   `Exercise Name (Right)`
-    -   **Planned Column:** Contains the target for THAT specific set (e.g., "12", "45s", "Failure").
+    -   **Volume Cap Rule:** If planned reps > 30 (e.g., 100 Mudgar swings), you MUST break them into multiple rounds (e.g., 5 rounds of 20). **NEVER schedule 100 reps in a single set.**
+    -   **Planned Column:** Contains the target for THAT specific set (e.g., "20", "45s").
     -   **Actual Column:** Leave empty for new plans.
 
     **Example:**
@@ -51,9 +52,9 @@ When generating a workout plan (for a new routine or a daily log), you MUST use 
     ### Round 1
     | Exercise | Planned | Actual | Notes |
     |---|---|---|---|
-    | Mudgar 360s | 12 | | |
-    | Single Arm Press (Left) | 8 | | |
-    | Single Arm Press (Right) | 8 | | |
+    | Mudgar 360s (Left) | 20 | | |
+    | Mudgar 360s (Right) | 20 | | |
+    | Goblet Squat | 10 | | |
     ```
 4.  **Automatic Updates:** When you provide a workout plan:
     -   **ALWAYS update the corresponding journal file** in `user_data/logs/journal/YYYY-MM-DD.md`.
