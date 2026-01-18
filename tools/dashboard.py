@@ -393,7 +393,7 @@ def main():
                             if in_workout and line.startswith("### "):
                                 # Save previous section/table
                                 if in_table and table_data:
-                                    sections.append({"type": "workout_table", "round": current_round, "data": table_data})
+                                    sections.append({"type": "workout_table", "round": current_round, "data": table_data, "round_id": current_round.replace(" ", "_") if current_round else "default"})
                                     table_data = []
                                     in_table = False
                                 if current_section["content"]:
@@ -411,8 +411,8 @@ def main():
                                 in_table = True
                                 continue  # Skip header row
                             
-                            # Skip table separator (|---|---|---|)
-                            if in_table and re.match(r"^\|[-\s|]+\|$", line):
+                            # Skip table separator (|---|---| or | :--- | :--- |)
+                            if in_table and re.match(r"^\|[-:\s|]+\|$", line):
                                 continue
                             
                             # Parse table rows
@@ -432,8 +432,11 @@ def main():
                                     # Check if timed
                                     is_timed = "s" in actual.lower() and ("plank" in exercise.lower() or "hold" in exercise.lower() or "45s" in planned or "30s" in actual)
                                     
+                                    # Use round + exercise as ID for consistency with save logic
+                                    round_id = current_round.replace(" ", "_") if current_round else "default"
+                                    ex_id = f"{round_id}_{exercise}".replace(" ", "_")
                                     table_data.append({
-                                        "id": f"{i}_{len(table_data)}",
+                                        "id": ex_id,
                                         "exercise": exercise,
                                         "planned": planned,
                                         "actual": actual,
@@ -448,7 +451,7 @@ def main():
                             # End of table (non-table line after table started)
                             if in_table and not line.startswith("|"):
                                 if table_data:
-                                    sections.append({"type": "workout_table", "round": current_round, "data": table_data})
+                                    sections.append({"type": "workout_table", "round": current_round, "data": table_data, "round_id": current_round.replace(" ", "_") if current_round else "default"})
                                     table_data = []
                                 in_table = False
                             
@@ -456,7 +459,7 @@ def main():
                             if in_workout and line.startswith("## ") and not line.startswith("## Workout"):
                                 in_workout = False
                                 if in_table and table_data:
-                                    sections.append({"type": "workout_table", "round": current_round, "data": table_data})
+                                    sections.append({"type": "workout_table", "round": current_round, "data": table_data, "round_id": current_round.replace(" ", "_") if current_round else "default"})
                                     table_data = []
                                     in_table = False
                             
@@ -465,7 +468,7 @@ def main():
                         
                         # Flush remaining
                         if in_table and table_data:
-                            sections.append({"type": "workout_table", "round": current_round, "data": table_data})
+                            sections.append({"type": "workout_table", "round": current_round, "data": table_data, "round_id": current_round.replace(" ", "_") if current_round else "default"})
                         if current_section["content"]:
                             sections.append(current_section)
                         
@@ -640,7 +643,7 @@ def main():
                                             new_lines.append(line)  # Keep header
                                             continue
                                         
-                                        if re.match(r"^\|[-\s|]+\|$", line):
+                                        if re.match(r"^\|[-:\s|]+\|$", line):
                                             new_lines.append(line)  # Keep separator
                                             continue
                                         

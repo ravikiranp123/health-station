@@ -1,4 +1,8 @@
 
+# DEPRECATED: This Dockerfile is no longer used.
+# The MCP server now runs via uv directly. See register_mcp.py.
+# Keeping for reference only.
+
 FROM python:3.11-alpine
 
 WORKDIR /app
