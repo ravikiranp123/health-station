@@ -17,10 +17,9 @@ USER_DATA_DIR = Path(os.getenv('HEALTHOS_DATA_DIR', _BASE_DIR / 'user_data'))
 REGISTRY_DIR = USER_DATA_DIR / 'registry'
 STATE_DIR = USER_DATA_DIR / 'state'
 LOGS_DIR = USER_DATA_DIR / 'logs'
-LIBRARY_DIR = USER_DATA_DIR / 'library'
 
-# Specific file paths - Registry
-RECIPE_DB_PATH = REGISTRY_DIR / 'recipes.sqlite'
+# Recipes are shared (not personal), keep in root registry/
+RECIPE_DB_PATH = _BASE_DIR / 'registry' / 'recipes.sqlite'
 USER_PROFILE_PATH = REGISTRY_DIR / 'user_profile.md'
 PREFERENCES_PATH = REGISTRY_DIR / 'preferences.md'
 NUTRITION_MECHANICS_PATH = REGISTRY_DIR / 'nutrition_mechanics.md'
