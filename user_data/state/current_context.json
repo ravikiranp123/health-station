@@ -1,0 +1,19 @@
+{
+    "current_weight_kg": 72,
+    "body_fat_percent": 20,
+    "height": 175,
+    "current_goal": "Lazy Aesthetic Recomp (V-Taper Focus)",
+    "training_philosophy": "Minimalist HIT (2-3x/week, high intensity, long rest)",
+    "fatigue_level": 2,
+    "fatigue_source": "None (Rest Day)",
+    "sleep_average_hrs": 7.5,
+    "daily_step_target": 10000,
+    "meal_pattern": "Protein-First (3 meals/day)",
+    "active_injuries": [],
+    "focus_areas": [
+        "Minimalist Training (2-3x/week, high intensity)",
+        "Daily Walking (10k steps)",
+        "Protein-First Meals (Eggs, Paneer, Soya)",
+        "Sleep Maintenance (7-8 hours baseline)"
+    ]
+}

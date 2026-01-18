@@ -214,17 +214,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-# HealthOS - User Data (Personal Information Only)
-# Only personal health data is excluded from main branch
-# Recipes and library are shared content
-user_data/registry/user_profile.md
-user_data/registry/preferences.md
-user_data/registry/nutrition_mechanics.md
-user_data/registry/*.json
-user_data/state/current_context.json
-user_data/logs/journal/
-
-# Keep templates and shared content
-!user_data/**/*.template
-!user_data/**/README.md
