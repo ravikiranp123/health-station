@@ -16,13 +16,14 @@ cp user_data/state/current_context.json.template user_data/state/current_context
 # 3. Edit with your info, then use /nutritionist, /coach, /hacker commands
 
 # 4. (Optional) Start dashboard to view stats
-uv run tools/dashboard.py
+uv run streamlit run tools/dashboard.py
 # Open http://localhost:8050
 ```
 
 > **Note:** Your personal data is gitignored on the main branch.
 >
 > **To version control your health data:**
+>
 > ```bash
 > # 1. Create a new branch
 > git checkout -b my-data-branch
