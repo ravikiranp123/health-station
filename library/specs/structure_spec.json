@@ -1,0 +1,38 @@
+{
+    "directories": [
+        "user_data/registry",
+        "user_data/state",
+        "user_data/logs/journal",
+        "user_data/logs/inbox"
+    ],
+    "files": {
+        "user_data/registry/user_profile.md": {
+            "required": true,
+            "format": "markdown",
+            "required_headers": [
+                "Stats",
+                "Goals",
+                "Skills & Equipment",
+                "Current Stack"
+            ]
+        },
+        "user_data/state/current_context.json": {
+            "required": true,
+            "format": "json",
+            "required_keys": [
+                "current_weight_kg",
+                "current_goal",
+                "fatigue_level",
+                "meal_pattern"
+            ]
+        }
+    },
+    "log_format": {
+        "required_headers": [
+            "Context",
+            "Nutrition",
+            "Workout",
+            "Supplements"
+        ]
+    }
+}
