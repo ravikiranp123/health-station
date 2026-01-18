@@ -17,7 +17,9 @@ st.set_page_config(
 )
 
 # Constants & Paths
-ROOT_DIR = Path(__file__).parent.parent
+import sys
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT_DIR))
 from tools.config import JOURNAL_DIR as CONFIG_JOURNAL_DIR, RECIPE_DB_PATH
 
 JOURNAL_DIR = CONFIG_JOURNAL_DIR
