@@ -20,7 +20,22 @@ uv run tools/dashboard.py
 # Open http://localhost:8050
 ```
 
-> **Note:** Your personal data is gitignored on the main branch. If you want to version control your health data, create a separate branch and remove the `user_data/` exclusions from `.gitignore`.
+> **Note:** Your personal data is gitignored on the main branch.
+>
+> **To version control your health data:**
+> ```bash
+> # 1. Create a new branch
+> git checkout -b my-data-branch
+>
+> # 2. Edit .gitignore to allow user_data
+> # Removing lines 231-233 in .gitignore
+> sed -i '' '/user_data\//d' .gitignore  # MacOS/BSD
+> # OR manual edit: remove "user_data/" from .gitignore
+>
+> # 3. Commit your data
+> git add user_data/
+> git commit -m "Add personal health data"
+> ```
 
 ---
 
@@ -116,6 +131,16 @@ Override data location via environment variable:
 ```bash
 export HEALTHOS_DATA_DIR=/custom/path/to/user_data
 ```
+
+## System Integrity
+
+To ensure your data structure is valid, run:
+
+```bash
+uv run tools/validate_integrity.py
+```
+
+This checks for missing files and verifies JSON/Markdown headers against `library/specs/structure_spec.json`.
 
 ## Branch Strategy
 
