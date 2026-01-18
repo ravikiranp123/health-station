@@ -1,95 +1,151 @@
-# HealthOS Architecture
+# HealthOS
 
-**HealthOS** is a "Life Engine" that treats the human body as a production environment.
+**HealthOS** is a local-first "Life Engine" that treats your body as a production environment.
+
+## TL;DR
+
+```bash
+# 1. Clone and setup
+git clone https://github.com/ravikiranp123/health-station.git
+cd health-station
+
+# 2. Copy templates to create your personal data
+cp user_data/registry/user_profile.md.template user_data/registry/user_profile.md
+cp user_data/state/current_context.json.template user_data/state/current_context.json
+
+# 3. Edit with your info, then use /nutritionist, /coach, /hacker commands
+
+# 4. (Optional) Start dashboard to view stats
+uv run tools/dashboard.py
+# Open http://localhost:8050
+```
+
+> **Note:** Your personal data is gitignored on the main branch. If you want to version control your health data, create a separate branch and remove the `user_data/` exclusions from `.gitignore`.
+
+---
 
 ## The Team (Agents)
-Agents are specialized personas invoked via slash commands.
-- **System Architect (`/architect`)**: Oversees the system, resolves conflicts, and manages the file structure.
-- **Nutritionist (`/nutritionist`)**: Manages input (calories, macros, hydration). Reads `user_data/registry/user_profile.md` and `user_data/state/current_context.json`.
-- **Strength Coach (`/coach`)**: Manages output (workouts, activity). Adjusts volume based on `fatigue_level`.
 
-## MCP Integration (The Kitchen API)
-To enable the agents to search recipes autonomously, you must configure the **Kitchen MCP Server**.
+Agents are specialized personas invoked via slash commands:
 
-### Option 1: Docker (Recommended)
-1.  **Build:** `docker build -t healthos-kitchen -f tools/Dockerfile.mcp .`
-2.  **Config:** Add this to your Agent / IDE settings `mcpServers`:
-    ```json
-    "kitchen-docker": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "<your-project-path>:/app", "-v", "<your-project-path>/user_data:/app/user_data", "healthos-kitchen"]
-    }
-    ```
-    *(Note: Replace path with your absolute project path).*
-
-    ```
-    *(Note: Replace path with your absolute project path).*
-
-### Option 2: Local Python
-1.  **Install:** `pip install mcp`
-2.  **Config:**
-    ```json
-    "kitchen-local": {
-      "command": "uv",
-      "args": ["run", "<your-project-path>/tools/kitchen_server.py"],
-      "env": { 
-        "PYTHONPATH": "<your-project-path>",
-        "HEALTHOS_DATA_DIR": "<your-project-path>/user_data"
-      }
-    }
-    ```
-
-### Antigravity Global Config
-For the Antigravity Agent to utilize these tools, you must add the config to **`~/.gemini/antigravity/mcp_config.json`**.
-*   You can run `python3 tools/register_mcp.py` to attempt automatic registration.
-*   *Note: Workspace-level configuration (e.g. per-repo `.vscode/mcp.json`) is supported by some IDEs but may not be fully recognized by the global Agent yet.*
+| Command           | Agent          | Reads                                                                            | Purpose                              |
+| ----------------- | -------------- | -------------------------------------------------------------------------------- | ------------------------------------ |
+| `/nutritionist` | Dr. Nutrition  | `user_data/registry/user_profile.md`, `user_data/state/current_context.json` | Meal planning, macro tracking        |
+| `/coach`        | Coach Iron     | `user_data/state/current_context.json`                                         | Workout planning based on fatigue    |
+| `/hacker`       | Life Hacker    | `user_data/registry/`                                                          | Supplement stacks, optimizations     |
+| `/chief`        | Chief of Staff | All of the above                                                                 | Daily briefings, holistic management |
 
 ## Directory Structure
 
-### `user_data/` (Your Personal Data)
-**This directory contains all your personal information and is excluded from version control on the main branch.**
+```
+health-station/
+├── user_data/                    # 🔒 Personal (gitignored on main)
+│   ├── registry/
+│   │   ├── user_profile.md       # Your bio, medical history, supplements
+│   │   ├── preferences.md        # Food/workout likes & dislikes
+│   │   └── *.json               # Prices, product approvals
+│   ├── state/
+│   │   └── current_context.json  # Current weight, fatigue, goals
+│   └── logs/
+│       ├── journal/              # Daily logs (YYYY-MM-DD.md)
+│       └── inbox/                # Wearable data staging
+├── registry/                     # 📦 Shared
+│   └── recipes.sqlite            # Recipe database
+├── library/                      # 📚 Shared templates
+│   ├── workouts/                 # Workout routines
+│   └── recipes/                  # Recipe templates
+└── tools/                        # 🔧 Utilities
+    ├── config.py                 # Path configuration
+    ├── kitchen_server.py         # Recipe MCP server
+    └── dashboard.py              # Stats dashboard
+```
 
-#### `user_data/registry/` (Static Data)
-Immutable or slowly changing data.
-- `user_profile.md`: Biology, equipment, medical history
-- `preferences.md`: Taste preferences, style
-- `nutrition_mechanics.md`: Educational content (can optionally keep in code)
-- `recipes.sqlite`: Your recipe database
-- `protein_prices.json`: Local pricing data
-- `trustified_passed_products.json`: Product approvals
+## MCP Integration (Kitchen API)
 
-#### `user_data/state/` (Dynamic Data)
-The mutable "RAM" of the system.
-- `current_context.json`: Weight, fatigue, current goal phase
+The Kitchen MCP server lets agents search and manage recipes.
 
-#### `user_data/logs/` (Immutable History)
-- `journal/`: Daily logs (Format: `YYYY-MM-DD.md`)
-- `inbox/`: Syncthing staging area for wearable data
+### Local Python (Recommended)
 
-#### `user_data/library/` (Personal Reference)
-- `recipes/`: Your customized recipes
-- `workouts/`: Your workout templates
+```json
+{
+  "healthos-kitchen": {
+    "command": "uv",
+    "args": ["run", "/path/to/health-station/tools/kitchen_server.py"],
+    "env": {
+      "PYTHONPATH": "/path/to/health-station"
+    }
+  }
+}
+```
+
+Add to `~/.gemini/antigravity/mcp_config.json` or run `python3 tools/register_mcp.py`.
+
+### Docker (Alternative)
+
+```bash
+docker build -t healthos-kitchen -f tools/Dockerfile.mcp .
+```
 
 ## Mobile & Wearable Sync
-**Goal:** Keep data local. No Cloud.
 
-### 1. File Sync (Syncthing)
-To log data from your phone (Camera/Voice) to HealthOS:
-1.  **Start the Server**: Run `docker-compose up -d` in this directory.
-2.  **Web UI**: Open `http://localhost:8384`.
-3.  **App**: Install **Syncthing-Fork** (Android) or **Möbius Sync** (iOS).
-4.  **Connect**: Pair devices and share `HealthOS Inbox` folder.
+**Goal:** Keep data local. No cloud.
 
-### 2. Wearable Data (Mi Band)
-1.  **App:** Use **Gadgetbridge** (Android).
-2.  **Auth:** Extract Key via `huami-token`. (See `wearable_integration_plan.md`).
-3.  **Flow:** Gadgetbridge Auto-Exports DB -> Syncthing Syncs file to Mac -> Script `ingest_wearable.py` updates HealthOS.
+### Syncthing (File Sync)
 
-### `knowledge_base/` (Feedback Loops)
-- Stores learned lessons to prevent regression (re-injuries, failed diets).
+```bash
+docker-compose up -d   # Start Syncthing
+# Open http://localhost:8384 to configure
+```
 
-## Workflows
-**Morning Protocol**:
-1. User types "Good Morning".
-2. System reads yesterday's logs + current readiness.
-3. Agents generate the plan for the day.
+### Wearable Data (Mi Band)
+
+1. Use **Gadgetbridge** (Android) to export data
+2. Syncthing syncs to `user_data/logs/inbox/`
+3. Run `python system/scripts/ingest_wearable.py` to process
+
+## Configuration
+
+All paths are managed by `tools/config.py`:
+
+```python
+from tools.config import USER_PROFILE_PATH, JOURNAL_DIR, RECIPE_DB_PATH
+```
+
+Override data location via environment variable:
+
+```bash
+export HEALTHOS_DATA_DIR=/custom/path/to/user_data
+```
+
+## Branch Strategy
+
+| Branch   | Purpose                        | Contains Personal Data? |
+| -------- | ------------------------------ | ----------------------- |
+| `main` | Shareable code + templates     | ❌ No                   |
+| `ravi` | Personal data branch (example) | ✅ Yes                  |
+
+## Roadmap
+
+### ✅ Done
+
+- [X] Agent personas (Nutritionist, Coach, Hacker, Chief)
+- [X] Recipe database with MCP integration (search, add, update)
+- [X] Daily journal system with workout tracking
+- [X] Wearable data ingestion (Mi Band via Gadgetbridge)
+- [X] Centralized config with environment variable support
+- [X] Clean branch strategy (main = shareable, personal branches for data)
+
+### 🚧 In Progress
+
+- [ ] Syncthing integration for local-first mobile sync
+- [ ] Dashboard UI for viewing stats and logs
+- [ ] Voice memo transcription → journal entries
+
+### 📋 Planned
+
+- [ ] Photo-based meal logging (camera → nutrition estimate)
+- [ ] Sleep score integration (auto-adjust workout intensity)
+- [ ] Supplement timing reminders
+- [ ] Weekly/monthly progress reports
+- [ ] Recipe image generation
+- [ ] Grocery list generator from meal plans

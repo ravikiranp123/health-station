@@ -1,32 +1,54 @@
 # HealthOS User Data
 
-This directory contains your personal health data. On the `main` branch, only template files are provided.
+This directory contains your personal health data.
 
 ## Setup for New Users
 
-1. **Copy Templates**: Copy the `.template` files and remove the `.template` extension:
-   ```bash
-   cp user_data/registry/user_profile.md.template user_data/registry/user_profile.md
-   cp user_data/state/current_context.json.template user_data/state/current_context.json
-   ```
+```bash
+# Copy templates and fill with your info
+cp registry/user_profile.md.template registry/user_profile.md
+cp state/current_context.json.template state/current_context.json
 
-2. **Fill in Your Data**: Edit the files with your personal information.
+# Edit with your personal data
+# Then the agents will read from these files
+```
 
-3. **Start Using**: The system will now use your personalized data.
+## Structure
 
-## Directory Structure
+| Directory | Purpose | Examples |
+|-----------|---------|----------|
+| `registry/` | Static personal info | Profile, preferences, product approvals |
+| `state/` | Current metrics | Weight, fatigue level, goals |
+| `logs/journal/` | Daily entries | `2026-01-18.md` |
+| `logs/inbox/` | Wearable imports | Gadgetbridge exports |
 
-- **registry/**: Static or slowly-changing data (profile, preferences, recipes)
-- **state/**: Dynamic data (current weight, fatigue level, context)
-- **logs/**: Historical data (daily journals, wearable data inbox)
-- **library/**: Your customized content (recipes, workouts)
+## Tracking Your Data in Git
 
-## Gitignore Note
+On the `main` branch, this directory is **gitignored** (except templates).
 
-On the `main` branch, the `.gitignore` file excludes your personal data from being committed. If you want to create your own personal branch to track your data (like the `ravi` branch example), you can:
+To version control your personal data:
 
-1. Create a new branch: `git checkout -b my-health-data`
-2. Edit `.gitignore` to remove the `user_data/` exclusions
-3. Commit your personal files to that branch
+```bash
+# Create your own branch
+git checkout -b my-health-data
 
-This keeps the `main` branch clean for sharing code improvements.
+# Edit .gitignore - remove the user_data exclusions at the bottom
+# Then:
+git add user_data/
+git commit -m "add: my personal data"
+```
+
+## Files Overview
+
+### registry/
+- `user_profile.md` - Your bio, medical history, supplement stack
+- `preferences.md` - Food/exercise likes & dislikes  
+- `nutrition_mechanics.md` - Educational reference material
+- `*.json` - Prices, product approvals
+
+### state/
+- `current_context.json` - Current weight, body fat %, fatigue level, goals
+
+### logs/journal/
+- Daily logs in `YYYY-MM-DD.md` format
+- Contains: Meals, workouts, supplements, notes
