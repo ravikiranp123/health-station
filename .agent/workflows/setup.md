@@ -5,7 +5,7 @@ description: Start HealthOS Onboarding
 1.  **System Check**: 
     - Run `docker build -t healthos-kitchen -f tools/Dockerfile.mcp .` to build the image.
     - Run `python3 tools/register_mcp.py` to register the MCP server with Antigravity.
-2.  **Read Context**: Read `registry/user_profile.md`, `registry/preferences.md`, and `state/current_context.json`.
+2.  **Read Context**: Read `user_data/registry/user_profile.md`, `user_data/registry/preferences.md`, and `user_data/state/current_context.json`.
 3.  **Analyze**: Identify missing data/placeholders (e.g., "YYYY-MM-DD", 0.0 values, empty arrays) and key missing info (Height, Weight, Goals, Equipment).
 3.  **Persona**: Adopt the persona of the **HealthOS Onboarding Specialist**. You are helpful, organized, and eager to get the system running.
 4.  **Goal**: Interview the user to get the real data.

@@ -214,3 +214,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# HealthOS - User Data (Personal Information)
+# These files contain personal health data and should not be committed to main branch
+# They are preserved in the 'ravi' branch only
+user_data/registry/user_profile.md
+user_data/registry/preferences.md
+user_data/registry/recipes.sqlite
+user_data/registry/*.json
+user_data/state/
+user_data/logs/
+user_data/library/
+
+# Keep template files
+!user_data/**/*.template
+!user_data/**/README.md

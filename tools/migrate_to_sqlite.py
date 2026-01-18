@@ -1,13 +1,13 @@
 
 import sqlite3
 import json
-import os
 from pathlib import Path
 
-# Paths
-ROOT_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-JSON_DB_PATH = ROOT_DIR / "registry/recipe_db.json"
-SQLITE_DB_PATH = ROOT_DIR / "registry/recipes.db"
+ROOT_DIR = Path(__file__).parent.parent
+from tools.config import REGISTRY_DIR
+
+JSON_DB_PATH = REGISTRY_DIR / "recipe_db.json"
+SQLITE_DB_PATH = REGISTRY_DIR / "recipes.db"
 
 def init_db(cursor):
     """Create the recipes table."""

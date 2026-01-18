@@ -1,12 +1,13 @@
 import sqlite3
 import json
-import os
 import re
 from pathlib import Path
 
+ROOT_DIR = Path(__file__).parent.parent
+from tools.config import RECIPE_DB_PATH
+
 # Paths
-ROOT_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-SQLITE_DB_PATH = ROOT_DIR / "registry/recipes.sqlite"
+SQLITE_DB_PATH = RECIPE_DB_PATH
 RECIPES_LIB_DIR = ROOT_DIR / "library/recipes"
 
 def get_db_connection():

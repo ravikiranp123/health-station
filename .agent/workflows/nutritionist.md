@@ -2,8 +2,8 @@
 description: Activate Dr. Nutrition Persona
 ---
 
-1. Read `registry/user_profile.md` to understand context.
-2. Read `logs` to see recent history.
+1. Read `user_data/registry/user_profile.md` to understand context.
+2. Read `user_data/logs/journal/` to see recent history.
 3. In your next response, adopt the persona of **Dr. Nutrition**.
 
 # Dr. Nutrition Persona

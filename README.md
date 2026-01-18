@@ -5,7 +5,7 @@
 ## The Team (Agents)
 Agents are specialized personas invoked via slash commands.
 - **System Architect (`/architect`)**: Oversees the system, resolves conflicts, and manages the file structure.
-- **Nutritionist (`/nutritionist`)**: Manages input (calories, macros, hydration). Reads `registry/user_profile.md` and `state/current_context.json`.
+- **Nutritionist (`/nutritionist`)**: Manages input (calories, macros, hydration). Reads `user_data/registry/user_profile.md` and `user_data/state/current_context.json`.
 - **Strength Coach (`/coach`)**: Manages output (workouts, activity). Adjusts volume based on `fatigue_level`.
 
 ## MCP Integration (The Kitchen API)
@@ -17,7 +17,7 @@ To enable the agents to search recipes autonomously, you must configure the **Ki
     ```json
     "kitchen-docker": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-v", "/Users/ravi/projects/health-station:/app", "healthos-kitchen"]
+      "args": ["run", "-i", "--rm", "-v", "<your-project-path>:/app", "-v", "<your-project-path>/user_data:/app/user_data", "healthos-kitchen"]
     }
     ```
     *(Note: Replace path with your absolute project path).*
@@ -31,8 +31,11 @@ To enable the agents to search recipes autonomously, you must configure the **Ki
     ```json
     "kitchen-local": {
       "command": "uv",
-      "args": ["run", "/Users/ravi/projects/health-station/tools/kitchen_server.py"],
-      "env": { "PYTHONPATH": "/Users/ravi/projects/health-station" }
+      "args": ["run", "<your-project-path>/tools/kitchen_server.py"],
+      "env": { 
+        "PYTHONPATH": "<your-project-path>",
+        "HEALTHOS_DATA_DIR": "<your-project-path>/user_data"
+      }
     }
     ```
 
@@ -41,23 +44,31 @@ For the Antigravity Agent to utilize these tools, you must add the config to **`
 *   You can run `python3 tools/register_mcp.py` to attempt automatic registration.
 *   *Note: Workspace-level configuration (e.g. per-repo `.vscode/mcp.json`) is supported by some IDEs but may not be fully recognized by the global Agent yet.*
 
-## Directory Structure (The Database)
+## Directory Structure
 
-### `registry/` (Static Data)
+### `user_data/` (Your Personal Data)
+**This directory contains all your personal information and is excluded from version control on the main branch.**
+
+#### `user_data/registry/` (Static Data)
 Immutable or slowly changing data.
-- `user_profile.md`: Biology, equipment, medical history.
-- `preferences.md`: Taste preferences, style.
+- `user_profile.md`: Biology, equipment, medical history
+- `preferences.md`: Taste preferences, style
+- `nutrition_mechanics.md`: Educational content (can optionally keep in code)
+- `recipes.sqlite`: Your recipe database
+- `protein_prices.json`: Local pricing data
+- `trustified_passed_products.json`: Product approvals
 
-### `state/` (Dynamic Data)
+#### `user_data/state/` (Dynamic Data)
 The mutable "RAM" of the system.
-- `current_context.json`: Weight, fatigue, current goal phase (Bulk/Cut).
+- `current_context.json`: Weight, fatigue, current goal phase
 
-### `logs/` (Immutable History)
-- `journal/`: Daily logs. (Format: `YYYY-MM-DD.md` is recommended).
+#### `user_data/logs/` (Immutable History)
+- `journal/`: Daily logs (Format: `YYYY-MM-DD.md`)
+- `inbox/`: Syncthing staging area for wearable data
 
-### `library/` (Reference Material)
-- `recipes/`: Collection of healthy recipes (Markdown).
-- `workouts/`: Saved routine templates.
+#### `user_data/library/` (Personal Reference)
+- `recipes/`: Your customized recipes
+- `workouts/`: Your workout templates
 
 ## Mobile & Wearable Sync
 **Goal:** Keep data local. No Cloud.

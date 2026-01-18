@@ -20,18 +20,18 @@
 
 ## 2. Sync Layer (Syncthing)
 *   **Mechanism:** Syncthing already monitors `HealthOS/inbox`.
-*   **Result:** The file `Gadgetbridge.sqlite` (or CSV) appears in `/Users/ravi/projects/health-station/logs/inbox/` automatically.
+*   **Result:** The file `Gadgetbridge.sqlite` (or CSV) appears in `<project-path>/user_data/logs/inbox/` automatically.
 
 ## 3. Ingestion Layer (Mac Script)
 *   **Script:** `system/scripts/ingest_wearable.py`
 *   **Trigger:** Manual run or Cron job (e.g. 8 AM).
 *   **Logic:**
-    1.  Read `logs/inbox/Gadgetbridge.sqlite`.
+    1.  Read `user_data/logs/inbox/Gadgetbridge.sqlite`.
     2.  Query `MI_BAND_ACTIVITY_SAMPLE` table (Steps, Intensity) and `SLEEP` table.
     3.  Compute: Total Steps, Sleep Duration (Deep/Light), Resting HR.
     4.  **Update:**
-        *   `state/current_context.json` (Update `fatigue_level` based on sleep).
-        *   `logs/journal/YYYY-MM-DD.md` (Append "Bio-Data" section).
+        *   `user_data/state/current_context.json` (Update `fatigue_level` based on sleep).
+        *   `user_data/logs/journal/YYYY-MM-DD.md` (Append "Bio-Data" section).
 
 ## Alternative (If Gadgetbridge is too hard)
 *   **Notify for Mi Band:** Can export CSV. Easier pairing.

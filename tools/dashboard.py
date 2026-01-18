@@ -17,9 +17,11 @@ st.set_page_config(
 )
 
 # Constants & Paths
-ROOT_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-JOURNAL_DIR = ROOT_DIR / "logs/journal"
-SQLITE_DB_PATH = ROOT_DIR / "registry/recipes.sqlite"
+ROOT_DIR = Path(__file__).parent.parent
+from tools.config import JOURNAL_DIR as CONFIG_JOURNAL_DIR, RECIPE_DB_PATH
+
+JOURNAL_DIR = CONFIG_JOURNAL_DIR
+SQLITE_DB_PATH = RECIPE_DB_PATH
 KB_DIR = ROOT_DIR / "knowledge_base"
 REGISTRY_DIR = ROOT_DIR / "registry"
 

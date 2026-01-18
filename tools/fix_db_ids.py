@@ -4,10 +4,12 @@ import os
 import shutil
 from pathlib import Path
 
+ROOT_DIR = Path(__file__).parent.parent
+from tools.config import RECIPE_DB_PATH
+
 # Paths
-ROOT_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-DB_PATH = ROOT_DIR / "registry/recipes.sqlite"
-BACKUP_PATH = ROOT_DIR / "registry/recipes.sqlite.bak"
+DB_PATH = RECIPE_DB_PATH
+BACKUP_PATH = RECIPE_DB_PATH.parent / "recipes.sqlite.bak"
 
 def fix_ids():
     if not DB_PATH.exists():

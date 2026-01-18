@@ -1,13 +1,17 @@
 import sqlite3
 import json
-import datetime
 import os
-import sys
+from datetime import datetime, date, timedelta
+from pathlib import Path
 
-# Configuration
-DB_PATH = "../../logs/inbox/Gadgetbridge" # Assumes script is running from system/scripts/
-CONTEXT_FILE = "../../state/current_context.json"
-JOURNAL_DIR = "../../logs/journal"
+# Use centralized config
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from tools.config import INBOX_DIR, CURRENT_CONTEXT_PATH, JOURNAL_DIR
+
+DB_PATH = str(INBOX_DIR / "Gadgetbridge")
+CONTEXT_FILE = str(CURRENT_CONTEXT_PATH)
+JOURNAL_DIR = str(JOURNAL_DIR)
 
 def get_db_path():
     # Check for .sqlite or no extension
@@ -22,15 +26,15 @@ def fetch_data(db_file):
     cursor = conn.cursor()
     
     # Dates
-    today = datetime.date.today()
-    yesterday = today - datetime.timedelta(days=1)
+    today = date.today()
+    yesterday = today - timedelta(days=1)
     
     # 1. Get Steps for Today (Simple Sum of raw intensity/steps if available, or just raw count)
     # Note: Gadgetbridge schema varies. This is a generic query for Mi Bands.
     # Usually: MI_BAND_ACTIVITY_SAMPLE table with (timestamp, raw_intensity, steps)
     try:
         # Epoch start of today
-        start_ts = int(datetime.datetime(today.year, today.month, today.day).timestamp())
+        start_ts = int(datetime(today.year, today.month, today.day).timestamp())
         
         cursor.execute(f"SELECT sum(steps) FROM MI_BAND_ACTIVITY_SAMPLE WHERE timestamp >= {start_ts}")
         steps_result = cursor.fetchone()
@@ -43,7 +47,7 @@ def fetch_data(db_file):
     # We look for sleep sessions ending after yesterday 8 PM
     try:
         # Epoch yesterday 8 PM
-        sleep_start_search = int(datetime.datetime(yesterday.year, yesterday.month, yesterday.day, 20, 0).timestamp())
+        sleep_start_search = int(datetime(yesterday.year, yesterday.month, yesterday.day, 20, 0).timestamp())
         
         # Query for SLEEP table (timestamp_from, timestamp_to, resolution, active)
         # Note: Valid sleep usually has resolution=1 (light?) or similar. This is simplified.
@@ -90,7 +94,7 @@ def update_context(data):
             context = json.load(f)
         
         # Update fields
-        context['last_updated'] = str(datetime.datetime.now())
+        context['last_updated'] = str(datetime.now())
         context['metrics'] = {
             "steps_today": data['steps'],
             "sleep_last_night": data['sleep_hours']
@@ -108,10 +112,10 @@ def update_context(data):
         print(f"Error updating context: {e}")
 
 def update_journal(data):
-    today_str = str(datetime.date.today())
+    today_str = str(date.today())
     file_path = os.path.join(JOURNAL_DIR, f"{today_str}.md")
     
-    content = f"\n\n## Bio-Data Sync ({datetime.datetime.now().strftime('%H:%M')})\n"
+    content = f"\n\n## Bio-Data Sync ({datetime.now().strftime('%H:%M')})\n"
     content += f"*   **Steps:** {data['steps']}\n"
     content += f"*   **Sleep:** {data['sleep_hours']} hours ({data['deep_sleep_mins']}m Deep)\n"
     

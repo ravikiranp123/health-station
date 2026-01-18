@@ -8,8 +8,8 @@ services:
       - PGID=20 # Standard Mac Group ID (staff)
       - TZ=Asia/Kolkata
     volumes:
-      - ./state/syncthing_config:/config
-      - ./logs/inbox:/data/inbox
+      - ./user_data/logs/inbox:/data/inbox
+      - syncthing-config:/config
     ports:
       - 8384:8384 # Web UI
       - 22000:22000/tcp
@@ -24,9 +24,14 @@ services:
     container_name: healthos-kitchen
     volumes:
       - .:/app
+      - ./user_data:/app/user_data
     environment:
       - PYTHONPATH=/app
+      - HEALTHOS_DATA_DIR=/app/user_data
     # Keep container running so we can exec into it, 
     # or serves as a build definition. 
     # 'tail -f /dev/null' is a common hack to keep non-server containers alive for exec.
     command: tail -f /dev/null
+
+volumes:
+  syncthing-config:

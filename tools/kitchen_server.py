@@ -10,10 +10,14 @@ import os
 import sqlite3
 import random
 from typing import List, Optional, Tuple
+from pathlib import Path
 
-# Configuration
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(BASE_DIR, 'registry', 'recipes.sqlite')
+# Configuration - Use centralized config
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from tools.config import RECIPE_DB_PATH
+
+DB_PATH = str(RECIPE_DB_PATH)
 
 # Initialize MCP Server
 mcp = FastMCP("KitchenAPI")
