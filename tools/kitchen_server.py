@@ -1,8 +1,9 @@
-#/// script
+# /// script
+# requires-python = ">=3.11"
 # dependencies = [
 #     "mcp",
 # ]
-#///
+# ///
 
 from mcp.server.fastmcp import FastMCP
 import json
@@ -316,5 +317,137 @@ def delete_recipe(recipe_id: str) -> str:
         conn.close()
         return f"Recipe {recipe_id} not found."
 
+# ============================================
+# INGREDIENT TOOLS
+# ============================================
+
+@mcp.tool()
+def get_ingredient(name: str) -> str:
+    """
+    Get nutrition for an ingredient by name.
+    Returns the user's default brand if available.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # Try exact match first, then partial match
+    cursor.execute("""
+        SELECT * FROM ingredients 
+        WHERE LOWER(name) = LOWER(?) 
+        ORDER BY is_user_default DESC 
+        LIMIT 1
+    """, (name,))
+    row = cursor.fetchone()
+    
+    if not row:
+        cursor.execute("""
+            SELECT * FROM ingredients 
+            WHERE LOWER(name) LIKE LOWER(?) 
+            ORDER BY is_user_default DESC 
+            LIMIT 1
+        """, (f"%{name}%",))
+        row = cursor.fetchone()
+    
+    conn.close()
+    
+    if row:
+        return json.dumps(dict(row), indent=2)
+    return f"Ingredient '{name}' not found. Use add_ingredient to add it."
+
+@mcp.tool()
+def list_ingredients() -> str:
+    """
+    List all tracked ingredients with nutrition.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, brand, serving_size, protein_g, carbs_g, fat_g, calories FROM ingredients ORDER BY name")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    return json.dumps([dict(r) for r in rows], indent=2)
+
+@mcp.tool()
+def add_ingredient(
+    name: str,
+    serving_size: str,
+    protein_g: float,
+    carbs_g: float,
+    fat_g: float,
+    calories: float,
+    brand: Optional[str] = None,
+    fiber_g: float = 0,
+    is_user_default: bool = True,
+    notes: Optional[str] = None,
+    source: Optional[str] = None
+) -> str:
+    """
+    Add a new ingredient with nutrition data.
+    
+    Args:
+        name: Ingredient name (e.g., "Paneer")
+        serving_size: Serving size description (e.g., "100g", "1 egg")
+        protein_g: Protein in grams
+        carbs_g: Carbohydrates in grams
+        fat_g: Fat in grams
+        calories: Calories
+        brand: Brand name if specific (e.g., "Milky Mist")
+        fiber_g: Fiber in grams (optional)
+        is_user_default: Mark as user's preferred brand
+        notes: Additional notes
+        source: Data source (e.g., "brand_label", "NIN_IFCT_2017")
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            INSERT INTO ingredients (name, brand, serving_size, protein_g, carbs_g, fat_g, fiber_g, calories, is_user_default, notes, source)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (name, brand, serving_size, protein_g, carbs_g, fat_g, fiber_g, calories, 1 if is_user_default else 0, notes, source))
+        conn.commit()
+        conn.close()
+        return f"Ingredient '{name}' added successfully."
+    except Exception as e:
+        conn.close()
+        return f"Error adding ingredient: {e}"
+
+@mcp.tool()
+def get_cooking_default(action: str) -> str:
+    """
+    Get default ingredient for a cooking action.
+    
+    Example: get_cooking_default("frying") -> {"ingredient": "Ghee", "quantity": "1 tbsp", "macros": {...}}
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT cd.action, cd.ingredient_name, cd.default_quantity, cd.notes,
+               i.protein_g, i.carbs_g, i.fat_g, i.calories
+        FROM cooking_defaults cd
+        LEFT JOIN ingredients i ON LOWER(cd.ingredient_name) = LOWER(i.name)
+        WHERE LOWER(cd.action) LIKE LOWER(?)
+        LIMIT 1
+    """, (f"%{action}%",))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if row:
+        return json.dumps({
+            "action": row["action"],
+            "ingredient": row["ingredient_name"],
+            "quantity": row["default_quantity"],
+            "notes": row["notes"],
+            "macros": {
+                "protein_g": row["protein_g"],
+                "carbs_g": row["carbs_g"],
+                "fat_g": row["fat_g"],
+                "calories": row["calories"]
+            }
+        }, indent=2)
+    return f"No cooking default found for action '{action}'."
+
 if __name__ == "__main__":
     mcp.run()
+
