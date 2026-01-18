@@ -1,0 +1,28 @@
+# User Profile Template
+
+## Stats
+- **DOB**: YYYY-MM-DD
+- **Height**: XXX cm
+- **Sex**: Male/Female
+- **Physique**: [Your current physique description]
+
+## Goals
+- **Current Goal**: [e.g., Muscle Gain, Fat Loss, Recomp]
+- **Training Philosophy**: [e.g., Minimalist, High Volume]
+- **Protein Target**: ~XXg/day
+
+## Medical History
+- **Conditions**: [List any medical conditions]
+- **Allergies**: [List any allergies]
+- **Injuries**: [List any injuries]
+
+## Schedule & Constraints
+- **Dietary**: [e.g., Vegetarian, Vegan, Omnivore]
+- **Workout Window**: [e.g., Morning, Evening]
+- **Daily Walking Target**: [e.g., 10,000 steps]
+
+## Skills & Equipment
+- **Equipment**: [List your available equipment]
+- **Kitchen**: [List your kitchen appliances]
+
+[Add more sections as needed - copy structure from the example in the ravi branch]

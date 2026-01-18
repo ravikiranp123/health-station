@@ -1,0 +1,18 @@
+{
+    "current_weight_kg": 70,
+    "body_fat_percent": 20,
+    "height": 175,
+    "current_goal": "Your Goal Here",
+    "training_philosophy": "Your Training Philosophy",
+    "fatigue_level": 2,
+    "fatigue_source": "None",
+    "sleep_average_hrs": 7.5,
+    "daily_step_target": 10000,
+    "meal_pattern": "3 meals/day",
+    "active_injuries": [],
+    "focus_areas": [
+        "Focus Area 1",
+        "Focus Area 2",
+        "Focus Area 3"
+    ]
+}
